@@ -6,6 +6,13 @@ const bodyParser = require('body-parser');
 app.set('views', __dirname + '/views');
 app.set('view engine', 'hbs');
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(myFakeMiddleware);
+
+function myFakeMiddleware(req, _, next){
+  console.log("myFakeMiddleware was called!");
+  req.secretValue = "swordfish";
+  next();
+}
 
 // route
 
@@ -58,6 +65,18 @@ app.post('/login', (req, res) => {
 
   // res.send(`Email: ${email}, Password: ${password}`);
 });
+
+app.get('/test', (req, res) => {
+  const mySecret = req.secretValue;
+  res.send(mySecret);
+});
+
+// OR in ES6 syntax
+// app.get('/test', (req, res) => {
+//   const {secretValue: mySecret} = req;
+//   res.send(mySecret);
+// });
+
 
 
 app.listen(3000, () => console.log('App listening on port 3000!'))
